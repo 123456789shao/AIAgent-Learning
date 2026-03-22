@@ -2,16 +2,18 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// 统一管理 Day1 运行时需要的配置。
+// 统一管理 Day2 运行时需要的配置。
 export type Config = {
   apiKey: string;
   model: string;
   maxTokens: number;
+  maxAttempts: number;
 };
 
 const apiKey = process.env.GEMINI_API_KEY;
 const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 const maxTokens = 1000;
+const maxAttempts = 3;
 
 // 读取并返回配置；如果没填 key，就直接报错。
 export function getConfig(): Config {
@@ -23,5 +25,6 @@ export function getConfig(): Config {
     apiKey,
     model,
     maxTokens,
+    maxAttempts,
   };
 }

@@ -58,7 +58,25 @@ npm run ask -- 什么是 Prompt？
 - 哪版更适合初学者
 - 哪版更符合格式和长度要求
 
-## 6. Day1 学习重点
+## 6. 调用链说明
+
+Day1 的调用链是：
+
+`index.ts -> config.ts -> prompts.ts -> model.ts -> Gemini -> 终端输出`
+
+你可以这样理解：
+
+1. `src/index.ts` 读取命令行里的用户问题
+2. `src/config.ts` 读取 `.env` 里的 key 和模型配置
+3. `src/prompts.ts` 提供 Prompt A / Prompt B 两套 system prompt
+4. `src/model.ts` 带着问题和 prompt 去调用 Gemini
+5. `src/index.ts` 把两次返回结果打印到终端
+
+一句话：
+
+- Day1 是“同一个问题，跑两套 Prompt，然后直接看文本结果差异”
+
+## 7. Day1 学习重点
 
 建议你重点观察：
 

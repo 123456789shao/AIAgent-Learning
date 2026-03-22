@@ -1,6 +1,5 @@
 import { getConfig } from "./config.js";
-import { promptLabels } from "./prompts.js";
-import { askModel } from "./model.js";
+import { generateStructuredAnswer } from "./retry.js";
 
 // 从命令行参数里读取用户问题。
 function getQuestionFromArgs(): string {
@@ -19,7 +18,7 @@ function getErrorMessage(error: unknown): string {
   return String(error);
 }
 
-// 串起 Day1 主流程：同一个问题跑两套 Prompt 并打印结果。
+// 串起 Day2 主流程：读取问题、生成结构化结果、打印输出。
 async function main(): Promise<void> {
   try {
     const question = getQuestionFromArgs();
@@ -27,17 +26,14 @@ async function main(): Promise<void> {
 
     console.log(`用户问题：${question}\n`);
 
-    for (const item of promptLabels) {
-      const answer = await askModel({
-        ...config,
-        systemPrompt: item.prompt,
-        question,
-      });
+    const result = await generateStructuredAnswer({
+      ...config,
+      question,
+    });
 
-      console.log(`===== ${item.name} =====`);
-      console.log(answer || "未获取到文本回答");
-      console.log("");
-    }
+    console.log(`尝试次数：${result.attemptsUsed}`);
+    console.log("最终结构化结果：");
+    console.log(JSON.stringify(result.data, null, 2));
   } catch (error: unknown) {
     console.error(`运行失败：${getErrorMessage(error)}`);
     process.exit(1);
