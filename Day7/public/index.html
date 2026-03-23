@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Day7 Multi-Agent Web Demo</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <div>
+          <h1>Day7 Multi-Agent Web Demo</h1>
+          <p>一个支持 planner / executor 协作、评测、鉴权与限流的最小 AI Agent 项目</p>
+        </div>
+        <div class="header-actions">
+          <span id="auth-status" class="auth-status">当前状态：未登录</span>
+          <button type="button" id="logout-button" class="secondary-button" disabled>退出登录</button>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="main-column">
+          <section class="panel auth-panel">
+            <h2>登录</h2>
+            <p>先输入共享密码，登录后才能调用聊天与指标接口。</p>
+            <form id="login-form" class="inline-form">
+              <input id="password-input" type="password" placeholder="请输入 APP_PASSWORD" autocomplete="current-password" />
+              <button type="submit">登录</button>
+            </form>
+            <div id="login-hint" class="hint">未登录时，聊天与指标请求会返回 401。</div>
+          </section>
+
+          <section class="panel chat-panel">
+            <div id="status" class="status">当前状态：idle</div>
+
+            <section class="sub-panel plan-panel">
+              <h2>Planner 输出</h2>
+              <pre id="plan-box" class="info-box muted">提交问题后，这里会显示执行计划。</pre>
+            </section>
+
+            <section class="sub-panel messages-panel">
+              <h2>对话</h2>
+              <div id="messages" class="messages"></div>
+            </section>
+
+            <form id="chat-form" class="composer">
+              <textarea id="message-input" placeholder="请输入你的问题，例如：Day4 和记忆、Day5 和 RAG 的区别是什么？"></textarea>
+              <div class="actions">
+                <button type="submit" id="send-button">发送</button>
+                <button type="button" id="retry-button" class="secondary-button">重试上一个问题</button>
+              </div>
+            </form>
+
+            <section class="sub-panel meta-panel">
+              <h2>引用与元信息</h2>
+              <pre id="meta-box" class="info-box muted">回答完成后，这里会显示 citations、耗时、成本和风险提示。</pre>
+            </section>
+
+            <div id="error-box" class="error-box hidden"></div>
+          </section>
+        </section>
+
+        <aside class="side-column">
+          <section class="panel metrics-panel">
+            <h2>运行指标</h2>
+            <ul>
+              <li>总请求数：<span id="metric-total">0</span></li>
+              <li>成功率：<span id="metric-success">0%</span></li>
+              <li>平均总耗时：<span id="metric-latency">0 ms</span></li>
+              <li>平均规划耗时：<span id="metric-planner">0 ms</span></li>
+              <li>平均执行耗时：<span id="metric-executor">0 ms</span></li>
+              <li>最近成本：<span id="metric-cost">0</span></li>
+              <li>最近状态：<span id="metric-status">idle</span></li>
+            </ul>
+          </section>
+
+          <section class="panel help-panel">
+            <h2>手动验证</h2>
+            <ol>
+              <li>先登录，再发送知识库内问题。</li>
+              <li>观察 planner 是否先输出目标、子任务和引用约束。</li>
+              <li>观察回答是否逐句流式展示，并在末尾给出 citations。</li>
+              <li>连续快速发送多次，确认 429 提示是否出现。</li>
+            </ol>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,82 @@
+[
+  {
+    "id": "correctness-day4-memory",
+    "question": "Day4 的长期记忆保存了什么？",
+    "expectedFacts": ["长期偏好", "持久化"],
+    "expectedInsufficientEvidence": false,
+    "forbiddenClaims": ["图片向量检索", "Redis 集群"],
+    "expectedFormat": "grounded_answer"
+  },
+  {
+    "id": "correctness-day5-rag",
+    "question": "Day5 主要解决了什么问题？",
+    "expectedFacts": ["RAG", "引用"],
+    "expectedInsufficientEvidence": false,
+    "forbiddenClaims": ["OAuth 登录"],
+    "expectedFormat": "grounded_answer"
+  },
+  {
+    "id": "correctness-standard-readme",
+    "question": "Standard.md 对 README 有什么要求？",
+    "expectedFacts": ["调用链", "执行流程"],
+    "expectedInsufficientEvidence": false,
+    "forbiddenClaims": ["必须使用 Vue"],
+    "expectedFormat": "grounded_answer"
+  },
+  {
+    "id": "correctness-day6-metrics",
+    "question": "Day6 的可观测性主要记录哪些信息？",
+    "expectedFacts": ["耗时", "成功率"],
+    "expectedInsufficientEvidence": false,
+    "forbiddenClaims": ["数据库慢查询"],
+    "expectedFormat": "grounded_answer"
+  },
+  {
+    "id": "format-day5-citation",
+    "question": "Day5 为什么要保留 citations？",
+    "expectedFacts": ["引用", "证据"],
+    "expectedInsufficientEvidence": false,
+    "forbiddenClaims": [],
+    "expectedFormat": "grounded_answer"
+  },
+  {
+    "id": "format-day6-streaming",
+    "question": "Day6 的流式输出是怎么实现的？",
+    "expectedFacts": ["伪流式", "切片"],
+    "expectedInsufficientEvidence": false,
+    "forbiddenClaims": ["WebSocket"],
+    "expectedFormat": "grounded_answer"
+  },
+  {
+    "id": "hallucination-image-search",
+    "question": "这个仓库支持图片向量检索吗？",
+    "expectedFacts": [],
+    "expectedInsufficientEvidence": true,
+    "forbiddenClaims": ["支持图片向量检索", "CLIP"],
+    "expectedFormat": "grounded_answer"
+  },
+  {
+    "id": "hallucination-mobile-app",
+    "question": "这个项目已经发布 iOS App 了吗？",
+    "expectedFacts": [],
+    "expectedInsufficientEvidence": true,
+    "forbiddenClaims": ["已经发布", "App Store"],
+    "expectedFormat": "grounded_answer"
+  },
+  {
+    "id": "mixed-day4-day5",
+    "question": "Day4 和记忆、Day5 和 RAG 的区别是什么？",
+    "expectedFacts": ["记忆", "RAG"],
+    "expectedInsufficientEvidence": false,
+    "forbiddenClaims": ["二者完全一样"],
+    "expectedFormat": "grounded_answer"
+  },
+  {
+    "id": "mixed-day6-productization",
+    "question": "为什么 Day6 不只是把 Day5 搬到网页上？",
+    "expectedFacts": ["状态", "错误提示"],
+    "expectedInsufficientEvidence": false,
+    "forbiddenClaims": ["只改了颜色"],
+    "expectedFormat": "grounded_answer"
+  }
+]
