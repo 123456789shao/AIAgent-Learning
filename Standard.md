@@ -263,6 +263,7 @@ export async function runAgent() {}
 - 如何配置 `.env`
 - 如何运行
 - 调用链/执行链说明
+- 必须单独写一段“调用链”或“执行流程”，说明从 `index.ts` 开始，经过哪些模块，最后如何得到结果
 - 示例输出
 
 ## 8.2 TASKS.md
