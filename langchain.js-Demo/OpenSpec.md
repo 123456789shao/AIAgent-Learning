@@ -1,141 +1,41 @@
-# OpenSpec 规范
+# OpenSpec 项目导航
 
-## 1. Why
+这个目录现在采用拆分后的 OpenSpec 结构。
 
-当前 `langchain.js-Demo` 的目标不是做一个大而全的 AI 平台，而是做一个能快速跑通、便于理解、后续可继续服务化演进的小 demo。
+当前 `langchain.js-Demo` 的规范来源以 `openspec/changes/langchain-js-mvp-demo/` 为主，根目录这个文件只负责导航，不再并行维护完整规范内容。
 
-如果没有规范，最容易出现的问题是：
+## 当前变更主题
 
-- 一开始同时堆太多能力，主线不清
-- 一边写代码一边改目标
-- 把脚本验证、AI 编排、服务化混在一起
-- 最后 demo 能跑，但结构难以扩展
+当前项目聚焦：**用 TypeScript + Node.js + LangChain.js 搭建一个最小可运行、可继续服务化演进的 AI Demo。**
 
-因此这里先用 OpenSpec 约束：**先定义目标、范围、边界与验收，再进入实现。**
+重点约束：
 
----
+- 坚持 MVP，不做大而全
+- 先跑通最小 AI 主链路
+- 保持配置、模型调用、Prompt、编排、入口分层
+- 为后续服务化预留结构
 
-## 2. What Changes
+## 规范入口
 
-本规范定义 `langchain.js-Demo` 第一阶段的实现方向：
+当前活跃变更位于：
 
-- 使用 `TypeScript + Node.js` 作为工程基础
-- 使用本地模型运行环境作为推理底座
-- 使用 `LangChain.js` 作为 AI 编排层
-- 先完成 MVP 主链路，再考虑服务化扩展
+- [openspec/changes/langchain-js-mvp-demo/proposal.md](openspec/changes/langchain-js-mvp-demo/proposal.md)
+- [openspec/changes/langchain-js-mvp-demo/tasks.md](openspec/changes/langchain-js-mvp-demo/tasks.md)
+- [openspec/changes/langchain-js-mvp-demo/specs/langchain-js-mvp-demo/spec.md](openspec/changes/langchain-js-mvp-demo/specs/langchain-js-mvp-demo/spec.md)
 
-同时明确：
+推荐阅读顺序：
 
-- 当前重点是“小 demo 跑通”
-- 不是一次性完成 Agent / RAG / Memory 全能力
-- 不是做重型架构
-- 不是先做复杂抽象再补功能
+1. `proposal.md`：为什么做这件事、范围是什么
+2. `spec.md`：项目必须满足哪些行为和结构约束
+3. `tasks.md`：当前落地事项和推进顺序
 
----
+## 当前目录说明
 
-## 3. Scope
+- [src/](src/)：项目源码目录，按职责拆分配置、模型、Prompt、链路和服务
+- [scripts/](scripts/)：辅助脚本与一次性调试脚本
+- [examples/](examples/)：示例输入输出与演示材料
+- [openspec/](openspec/)：OpenSpec 规范目录
 
-### In Scope
+## 一句话理解
 
-第一阶段包含：
-
-- 基础 TypeScript / Node.js 工程搭建
-- 环境变量与本地运行配置
-- 本地模型调用链路打通
-- LangChain.js 的最小调用与编排
-- 一个可运行的 MVP 场景
-- 为后续服务化保留清晰结构
-
-### Out of Scope
-
-第一阶段不包含：
-
-- 大规模多 Agent 协作
-- 完整 RAG 系统
-- 跨会话记忆
-- 复杂权限体系
-- 重型前后端一体化平台设计
-- 为未来假设场景做过度抽象
-
----
-
-## 4. Architecture
-
-推荐按 4 层理解当前 demo：
-
-### 4.1 基础层
-负责运行环境与工程基础。
-
-包括：
-- TypeScript
-- Node.js
-- 包管理
-- 环境变量
-- 本地模型运行环境
-
-### 4.2 AI 能力层
-负责 AI 编排与模型调用。
-
-包括：
-- LangChain.js
-- Prompt 管理
-- 模型调用封装
-- 输出结果整理
-
-### 4.3 服务层
-负责把 AI 能力包装成可调用接口。
-
-包括：
-- API 路由
-- 请求处理
-- 返回格式统一
-
-### 4.4 应用层
-负责具体 demo 场景。
-
-例如：
-- 问答 demo
-- 总结 demo
-- 改写 demo
-
----
-
-## 5. Rules
-
-### 5.1 先 MVP，后扩展
-先跑通一条主链路，再增加高级能力。
-
-### 5.2 先脚本验证，后服务化
-先证明 AI 能力可用，再考虑接入 Express / Koa / Next.js / NestJS。
-
-### 5.3 结构清晰，职责分离
-至少区分：
-- 配置
-- 模型调用
-- Prompt
-- 主流程编排
-- 服务入口
-
-### 5.4 不做过度设计
-当前 demo 以学习和落地验证为主，不提前引入复杂抽象。
-
-### 5.5 验收要可判断
-规范必须写成可验证结果，而不是模糊目标。
-
----
-
-## 6. Expected Outcome
-
-完成第一阶段后，项目应满足：
-
-- 可以在本地完成一次最小 AI 调用
-- LangChain.js 主链路可以独立运行
-- 代码结构能区分实验脚本与正式入口
-- 后续可以平滑演进到服务化
-- 项目仍保持小而清晰，不被过度复杂化
-
----
-
-## 7. One-line Summary
-
-`langchain.js-Demo` 的 OpenSpec 目标是：**用 TypeScript + Node.js + LangChain.js 做一个最小可运行、结构清晰、可继续服务化演进的 AI demo。**
+**这里的 OpenSpec 作用是：先把 MVP 的目标、范围、边界和验收写清楚，再进入实现。**
