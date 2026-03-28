@@ -2,29 +2,63 @@
 
 一个用于学习 LangChain.js 的最小示例项目。
 
-当前阶段目标：
-- 保留最小 basic chain 基线
-- 完成单 Agent Runtime MVP 的前两步：agent + memory
+## 当前阶段目标
+
+当前先完成同事建议路线里的前三步：
+
+- 第一步：`agent`
+- 第二步：`memory`
+- 第三步：`tool`
+
+同时保留 `basic chain` 作为最小 baseline，方便持续对照。
 
 ## 当前已完成
 
+### 第零步：basic chain baseline
+
 - 基础环境变量读取与校验
 - Ollama 本地模型接入
-- basic chain 调用链路
+- basic chain 调用链路打通
+- basic 路线可独立运行
+
+### 第一步：agent
+
 - 单 Agent 最小执行入口
+- agent 能接收输入
+- agent 能调用模型
+- agent 能返回结果
+
+### 第二步：memory
+
 - session 级短期 memory
+- memory 按 `sessionId` 隔离
+- 同一 session 内可记住最近几轮对话
+- history 超出上限时自动裁剪
+
+### 第三步：tool
+
+- 接入一个最小 mock weather tool
+- 遇到天气问题时优先走 weather tool
+- 未提供城市时返回澄清提示
+- tool 当前返回 mock 数据，后续可替换为 Google 查询
+
+### 当前整体验证
+
 - basic chain 与 agent 双路径运行验证
 - 同 session 多轮对话验证
 - 不同 session 隔离验证
+- 天气 tool 命中与缺参提示验证
 
 ## 目录说明
 
 - `src/config`：环境变量读取与校验
 - `src/models`：模型工厂
 - `src/prompts`：prompt 模板
-- `src/chains`：基础 chain 执行逻辑
+- `src/chains`：basic chain 执行逻辑
 - `src/agents`：agent 类型与执行入口
 - `src/memory`：session 级短期记忆存储
+- `src/tools`：第三步的工具能力
+  - `weatherTool.ts`：mock weather tool
 - `src/services`：对外服务层入口
   - `basicService.ts`：basic 路线入口
   - `agentService.ts`：agent 路线入口
@@ -60,31 +94,22 @@ npm install
 npm run dev
 ```
 
-当前运行后会输出两部分结果：
+当前运行后会输出几部分结果：
+
 - Basic Output：来自 `runBasicService -> runBasicChain`
-- Agent Output：来自 `runAgentService -> runAgent`
+- Session A Round 1 / Round 2：验证 memory
+- Weather Output：验证天气 tool
+- Weather Missing City：验证天气查询缺参提示
+- Session B Isolation Check：验证 session 隔离
 
-同时会展示：
-- Session A 第一轮结果
-- Session A 第二轮结果
-- Session B 隔离结果
+## 当前阶段说明
 
-## 当前第二阶段说明
-
-当前实现的是同事建议顺序里的前两步：
+当前实现的是同事建议顺序里的前三步：
 
 `agent -> memory -> tool -> skill -> loop`
 
-现在已完成的是：
-- agent 初始化
-- agent 能接收输入
-- agent 能调用模型
-- agent 能返回结果
-- memory 能按 `sessionId` 隔离
-- 同一 session 内能记住最近几轮对话
-- history 超出上限时会自动裁剪
+### 当前 memory 的边界
 
-当前 memory 的边界是：
 - 只做当前进程内短期记忆
 - 只做 session 级隔离
 - 只保留最近 6 条消息
@@ -92,10 +117,19 @@ npm run dev
 - 不做 RAG / 向量检索
 - 不做摘要压缩
 
-还未开始的是：
-- tool
-- skill
-- loop
+### 当前 tool 的边界
+
+- 只做一个 weather tool
+- 只支持简单城市级查询
+- 当前只返回 mock 数据
+- 不做真实联网
+- 不做多工具协作
+- 不做 loop
+
+### 还未开始
+
+- 第四步：`skill`
+- 第五步：`loop`
 
 ## 命名说明
 
@@ -105,6 +139,7 @@ npm run dev
 - agent：按同事思路继续演进的 runtime 线
 
 当前对外主干可以这样看：
+
 - basic 线：`basicPrompt` / `basicService` / `runBasicChain`
 - agent 线：`agentPrompt` / `agentService` / `runAgent`
 
@@ -115,10 +150,15 @@ npm run dev
 1. basic chain 仍可正常运行
 2. `session-a` 第一轮说“我叫小王，请记住”
 3. `session-a` 第二轮追问“我刚刚叫什么？”
-4. `session-b` 直接追问“我刚刚叫什么？”，验证不会串会话
+4. `session-a` 追问“北京今天天气怎么样？”
+5. `session-a` 再问“今天天气怎么样？”，验证缺少城市时的提示
+6. `session-b` 直接追问“我刚刚叫什么？”，验证不会串会话
 
 预期现象：
+
 - `session-a` 第二轮能答出“小王”
+- 天气问题会命中 weather tool
+- 没提供城市时会提示补充城市
 - `session-b` 因为没有历史，答不出来
 
 ## OpenSpec 说明
@@ -131,5 +171,6 @@ npm run dev
   - 对应当前单 Agent Runtime MVP 演进
 
 可以理解为：
+
 - 前者记录“最小 chain demo”
 - 后者记录“从 chain 继续演进到 agent runtime”

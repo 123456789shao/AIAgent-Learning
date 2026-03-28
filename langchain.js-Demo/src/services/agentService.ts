@@ -8,13 +8,14 @@ import {
 
 export async function runAgentService(input: AgentRunInput) {
   // service 层串起 memory 读写和 agent 执行。
+  appendUserMessage(input.sessionId, input.userInput);
   const history = getSessionHistory(input.sessionId);
   const result = await runAgent({
+    sessionId: input.sessionId,
     history,
     userInput: input.userInput,
   });
 
-  appendUserMessage(input.sessionId, input.userInput);
   appendAssistantMessage(input.sessionId, result.output);
 
   return result;
