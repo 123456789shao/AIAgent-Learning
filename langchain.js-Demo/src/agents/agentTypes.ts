@@ -1,3 +1,11 @@
+export type ToolName = "weather";
+
+export type ToolTrace = {
+  toolName: ToolName;
+  toolInput: string;
+  toolOutput: string;
+};
+
 export type MessageRole = "user" | "assistant";
 
 export type AgentMessage = {
@@ -20,15 +28,9 @@ export type AgentExecutionInput = {
   history: AgentHistory;
 };
 
-export type AgentToolTrace = {
-  toolName: "weather";
-  toolInput: string;
-  toolOutput: string;
-};
-
 export type AgentRunResult = {
   // 标记当前返回来自哪种执行模式，后续接 tool/skill/loop 时便于扩展。
   mode: "single-agent" | "agent-with-tool";
   output: string;
-  toolTrace?: AgentToolTrace;
+  toolTrace?: ToolTrace;
 };

@@ -1,10 +1,12 @@
 import { runBasicService } from "./services/basicService.js";
 import { runAgentService } from "./services/agentService.js";
+import { runSkillService } from "./services/skillService.js";
 
 async function main() {
   const basicInput = "请用一句话介绍 LangChain.js 的作用。";
   const sessionA = "session-a";
   const sessionB = "session-b";
+  const skillSession = "skill-session";
   const weatherInput = "北京今天天气怎么样？";
   const weatherWithoutCityInput = "今天天气怎么样？";
 
@@ -31,6 +33,18 @@ async function main() {
     sessionId: sessionB,
     userInput: "我刚刚叫什么？",
   });
+  const skillWeatherResult = await runSkillService({
+    sessionId: skillSession,
+    skillName: "weather-brief",
+    params: {
+      city: "上海",
+    },
+  });
+  const skillMissingCityResult = await runSkillService({
+    sessionId: skillSession,
+    skillName: "weather-brief",
+    params: {},
+  });
 
   console.log("Basic Input:", basicInput);
   console.log("Basic Output:", basicOutput);
@@ -44,6 +58,11 @@ async function main() {
   console.log("Weather Missing City Input:", weatherWithoutCityInput);
   console.log("Weather Missing City:", weatherWithoutCity.output);
   console.log("Session B Isolation Check:", isolatedSessionResult.output);
+  console.log("Skill Name:", skillWeatherResult.skillName);
+  console.log("Skill Mode:", skillWeatherResult.mode);
+  console.log("Skill Tool:", skillWeatherResult.toolTrace?.toolName ?? "none");
+  console.log("Skill Output:", skillWeatherResult.output);
+  console.log("Skill Missing City:", skillMissingCityResult.output);
 }
 
 main().catch((error) => {
