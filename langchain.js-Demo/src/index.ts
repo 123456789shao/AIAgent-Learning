@@ -1,17 +1,33 @@
-import { runDemo } from "./services/demoService.js";
-import { runAgentDemo } from "./services/agentService.js";
+import { runBasicService } from "./services/basicService.js";
+import { runAgentService } from "./services/agentService.js";
 
 async function main() {
-  const input = "请用一句话介绍 LangChain.js 的作用。";
+  const basicInput = "请用一句话介绍 LangChain.js 的作用。";
+  const sessionA = "session-a";
+  const sessionB = "session-b";
 
   // 先保留 basic chain 基线，方便后续和 agent 输出做对照。
-  const basicOutput = await runDemo(input);
-  const agentResult = await runAgentDemo({ userInput: input });
+  const basicOutput = await runBasicService(basicInput);
 
-  console.log("Input:", input);
+  const agentRound1 = await runAgentService({
+    sessionId: sessionA,
+    userInput: "我叫小王，请记住。",
+  });
+  const agentRound2 = await runAgentService({
+    sessionId: sessionA,
+    userInput: "我刚刚叫什么？",
+  });
+  const isolatedSessionResult = await runAgentService({
+    sessionId: sessionB,
+    userInput: "我刚刚叫什么？",
+  });
+
+  console.log("Basic Input:", basicInput);
   console.log("Basic Output:", basicOutput);
-  console.log("Agent Mode:", agentResult.mode);
-  console.log("Agent Output:", agentResult.output);
+  console.log("Agent Mode:", agentRound1.mode);
+  console.log("Session A Round 1:", agentRound1.output);
+  console.log("Session A Round 2:", agentRound2.output);
+  console.log("Session B Isolation Check:", isolatedSessionResult.output);
 }
 
 main().catch((error) => {
