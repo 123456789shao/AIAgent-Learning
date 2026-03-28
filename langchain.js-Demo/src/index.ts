@@ -5,6 +5,8 @@ async function main() {
   const basicInput = "请用一句话介绍 LangChain.js 的作用。";
   const sessionA = "session-a";
   const sessionB = "session-b";
+  const weatherInput = "北京今天天气怎么样？";
+  const weatherWithoutCityInput = "今天天气怎么样？";
 
   // 先保留 basic chain 基线，方便后续和 agent 输出做对照。
   const basicOutput = await runBasicService(basicInput);
@@ -19,11 +21,11 @@ async function main() {
   });
   const weatherResult = await runAgentService({
     sessionId: sessionA,
-    userInput: "北京今天天气怎么样？",
+    userInput: weatherInput,
   });
   const weatherWithoutCity = await runAgentService({
     sessionId: sessionA,
-    userInput: "今天天气怎么样？",
+    userInput: weatherWithoutCityInput,
   });
   const isolatedSessionResult = await runAgentService({
     sessionId: sessionB,
@@ -35,9 +37,11 @@ async function main() {
   console.log("Agent Mode:", agentRound1.mode);
   console.log("Session A Round 1:", agentRound1.output);
   console.log("Session A Round 2:", agentRound2.output);
+  console.log("Weather Input:", weatherInput);
   console.log("Weather Mode:", weatherResult.mode);
   console.log("Weather Tool:", weatherResult.toolTrace?.toolName ?? "none");
   console.log("Weather Output:", weatherResult.output);
+  console.log("Weather Missing City Input:", weatherWithoutCityInput);
   console.log("Weather Missing City:", weatherWithoutCity.output);
   console.log("Session B Isolation Check:", isolatedSessionResult.output);
 }

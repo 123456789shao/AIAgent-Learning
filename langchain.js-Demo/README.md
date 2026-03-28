@@ -37,10 +37,10 @@
 
 ### 第三步：tool
 
-- 接入一个最小 mock weather tool
+- 接入一个最小 weather tool
 - 遇到天气问题时优先走 weather tool
 - 未提供城市时返回澄清提示
-- tool 当前返回 mock 数据，后续可替换为 Google 查询
+- tool 当前通过 WeatherAPI 查询天气信息
 
 ### 当前整体验证
 
@@ -58,7 +58,7 @@
 - `src/agents`：agent 类型与执行入口
 - `src/memory`：session 级短期记忆存储
 - `src/tools`：第三步的工具能力
-  - `weatherTool.ts`：mock weather tool
+  - `weatherTool.ts`：WeatherAPI weather tool
 - `src/services`：对外服务层入口
   - `basicService.ts`：basic 路线入口
   - `agentService.ts`：agent 路线入口
@@ -70,6 +70,7 @@
 - Node.js
 - Ollama
 - 可用的本地模型
+- WeatherAPI 可用 key
 
 ## 环境变量
 
@@ -78,6 +79,7 @@
 ```env
 OLLAMA_BASE_URL=http://localhost:11434
 OLLAMA_MODEL=qwen3:8b
+WEATHER_API_KEY=your_weatherapi_key
 ```
 
 如果你使用别的模型，只需要把 `OLLAMA_MODEL` 改成对应名称。
@@ -98,7 +100,7 @@ npm run dev
 
 - Basic Output：来自 `runBasicService -> runBasicChain`
 - Session A Round 1 / Round 2：验证 memory
-- Weather Output：验证天气 tool
+- Weather Output：验证 WeatherAPI weather tool
 - Weather Missing City：验证天气查询缺参提示
 - Session B Isolation Check：验证 session 隔离
 
@@ -121,8 +123,8 @@ npm run dev
 
 - 只做一个 weather tool
 - 只支持简单城市级查询
-- 当前只返回 mock 数据
-- 不做真实联网
+- 当前通过 WeatherAPI 做真实联网查询
+- 当前解析规则保持最小实现
 - 不做多工具协作
 - 不做 loop
 

@@ -1,32 +1,48 @@
+import { env } from "../config/env.js";
 import type { WeatherQuery, WeatherResult } from "./weatherTypes.js";
 
-const MOCK_WEATHER_DATA: Record<string, Omit<WeatherResult, "city" | "source">> = {
-  北京: {
-    condition: "晴",
-    temperatureC: 22,
-  },
-  上海: {
-    condition: "多云",
-    temperatureC: 25,
-  },
-  深圳: {
-    condition: "小雨",
-    temperatureC: 27,
-  },
+type WeatherApiResponse = {
+  current?: {
+    temp_c?: number;
+    condition?: {
+      text?: string;
+    };
+  };
+  location?: {
+    name?: string;
+  };
 };
 
-const DEFAULT_WEATHER = {
-  condition: "阴",
-  temperatureC: 23,
-};
+function buildWeatherApiUrl(city: string) {
+  const url = new URL("https://api.weatherapi.com/v1/current.json");
 
-export function queryWeather(query: WeatherQuery): WeatherResult {
-  const weather = MOCK_WEATHER_DATA[query.city] ?? DEFAULT_WEATHER;
+  url.searchParams.set("key", env.WEATHER_API_KEY);
+  url.searchParams.set("q", city);
+  url.searchParams.set("lang", "zh");
+
+  return url;
+}
+
+export async function queryWeather(query: WeatherQuery): Promise<WeatherResult> {
+  const response = await fetch(buildWeatherApiUrl(query.city));
+
+  if (!response.ok) {
+    throw new Error(`WeatherAPI 查询失败: ${response.status} ${response.statusText}`);
+  }
+
+  const data = (await response.json()) as WeatherApiResponse;
+  const condition = data.current?.condition?.text;
+  const temperatureC = data.current?.temp_c;
+  const city = data.location?.name ?? query.city;
+
+  if (!condition || typeof temperatureC !== "number") {
+    throw new Error("WeatherAPI 返回的天气数据不完整");
+  }
 
   return {
-    city: query.city,
-    condition: weather.condition,
-    temperatureC: weather.temperatureC,
-    source: "mock",
+    city,
+    condition,
+    temperatureC,
+    source: "weatherapi",
   };
 }

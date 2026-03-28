@@ -24,12 +24,12 @@ function extractCity(userInput: string) {
   return SUPPORTED_CITIES.find((city) => userInput.includes(city));
 }
 
-function buildWeatherAnswer(city: string) {
-  const weather = queryWeather({ city });
+async function buildWeatherAnswer(city: string) {
+  const weather = await queryWeather({ city });
 
   return {
     mode: "agent-with-tool" as const,
-    output: `${weather.city}当前${weather.condition}，${weather.temperatureC}°C。以上结果来自 mock weather tool。`,
+    output: `${weather.city}当前${weather.condition}，${weather.temperatureC}°C。以上结果来自 WeatherAPI。`,
     toolTrace: {
       toolName: "weather" as const,
       toolInput: city,
@@ -59,7 +59,6 @@ async function runModelAnswer(input: AgentExecutionInput): Promise<AgentRunResul
 }
 
 export async function runAgent(input: AgentExecutionInput): Promise<AgentRunResult> {
-  // 第三步先接入最小 mock weather tool，普通问题仍走原模型回答链。
   if (isWeatherQuestion(input.userInput)) {
     const city = extractCity(input.userInput);
 
@@ -70,7 +69,14 @@ export async function runAgent(input: AgentExecutionInput): Promise<AgentRunResu
       };
     }
 
-    return buildWeatherAnswer(city);
+    try {
+      return await buildWeatherAnswer(city);
+    } catch {
+      return {
+        mode: "agent-with-tool",
+        output: `暂时无法查询到${city}的天气信息，请稍后重试。`,
+      };
+    }
   }
 
   return runModelAnswer(input);

@@ -6,6 +6,7 @@ dotenv.config();
 const envSchema = z.object({
   OLLAMA_BASE_URL: z.string().url(),
   OLLAMA_MODEL: z.string().min(1),
+  WEATHER_API_KEY: z.string().min(1),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
