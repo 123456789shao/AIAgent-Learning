@@ -14,16 +14,18 @@
 - weather tool 查询外部天气信息
 - Jupyter notebook 可顺序运行
 
-后续再逐步演进到：memory、agent。
+后续再逐步演进到：agent、memory。
 
 ## 目录说明
 
 - `notebooks/01_basic_chain.ipynb`：basic chain、prompt template、structured output 学习入口
 - `notebooks/02_tool.ipynb`：weather tool 学习入口
+- `notebooks/03_agent.ipynb`：最小 agent 学习入口
 - `src/config/env.py`：环境变量读取与校验
 - `src/models/ollama.py`：Ollama 模型创建
 - `src/chains/basic_chain.py`：basic chain 与 structured output 执行逻辑
 - `src/chains/tool_chain.py`：模型与 weather tool 的最小调用链
+- `src/chains/agent_chain.py`：最小 weather agent 执行逻辑
 - `src/tools/weather.py`：WeatherAPI 查询与 LangChain tool 封装
 - `requirements.txt`：最小依赖
 - `.env.example`：环境变量示例
@@ -34,7 +36,7 @@
 - Jupyter
 - Ollama
 - 可用的本地模型
-- WeatherAPI key（仅第 3 步 tool 需要）
+- WeatherAPI key（仅第 3 步 tool / 第 4 步 agent 需要）
 
 ## 环境变量
 
@@ -51,7 +53,7 @@ WEATHER_API_KEY=your_weatherapi_key
 说明：
 
 - `OLLAMA_BASE_URL` 与 `OLLAMA_MODEL` 是前几步的基础配置
-- `WEATHER_API_KEY` 只在第 3 步 tool 示例中需要
+- `WEATHER_API_KEY` 只在第 3 步 tool 和第 4 步 agent 示例中需要
 
 ## 安装依赖
 
@@ -71,6 +73,7 @@ jupyter notebook
 
 - `notebooks/01_basic_chain.ipynb`
 - `notebooks/02_tool.ipynb`
+- `notebooks/03_agent.ipynb`
 
 ## 当前 notebook 会验证什么
 
@@ -91,6 +94,14 @@ jupyter notebook
 4. 模型能绑定 weather tool 并完成一次最小 tool calling
 5. 最终输出是基于工具结果生成的中文天气总结
 
+### 03_agent.ipynb
+
+1. 能读取 agent 所需环境变量
+2. agent 面对天气问题时会触发 weather tool
+3. agent 面对普通问题时可直接回答
+4. 口语化天气问题也能触发 tool
+5. 最终输出是基于工具结果生成的中文回答，而不是固定模板
+
 ## 最小通过标准
 
 - 没有 Ollama 相关环境变量缺失错误
@@ -99,6 +110,8 @@ jupyter notebook
 - 配置 `WEATHER_API_KEY` 后，`02_tool.ipynb` 能成功运行
 - weather tool 能查询指定城市的当前天气
 - 模型面对天气问题时能触发 weather tool
+- `03_agent.ipynb` 能成功运行
+- agent 能在需要时自主调用 weather tool
 - 最终输出为基于工具结果的中文回答
 
 ## 后续建议路线
@@ -109,8 +122,8 @@ jupyter notebook
 - 第一步：prompt template
 - 第二步：output parser / structured output
 - 第三步：tool
+- 第四步：agent
 
 后续可以继续按这个顺序演进：
 
-- 第四步：memory
-- 第五步：agent
+- 第五步：memory
