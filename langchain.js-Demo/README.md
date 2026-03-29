@@ -4,12 +4,13 @@
 
 ## 当前阶段目标
 
-当前先完成同事建议路线里的前四步：
+当前先完成同事建议路线里的前五步：
 
 - 第一步：`agent`
 - 第二步：`memory`
 - 第三步：`tool`
 - 第四步：`skill`
+- 第五步：`loop`
 
 同时保留 `basic chain` 作为最小 baseline，方便持续对照。
 
@@ -50,6 +51,13 @@
 - `weather-brief` 会复用 weather tool
 - skill 缺少 `city` 参数时返回明确提示
 
+### 第五步：loop
+
+- agent 当前改为通过有边界的 loop 执行
+- 每一步只产出结构化决策：`tool` 或 `final`
+- 当前 loop 会按需调用 weather tool
+- loop 返回中可观察每一步 trace 和 stop reason
+
 ### 当前整体验证
 
 - basic chain 与 agent 双路径运行验证
@@ -57,14 +65,17 @@
 - 不同 session 隔离验证
 - 天气 tool 命中与缺参提示验证
 - skill 调用、缺参提示与结果输出验证
+- loop 的 `final` / `tool -> final` / stop reason 验证
 
 ## 目录说明
 
 - `src/config`：环境变量读取与校验
 - `src/models`：模型工厂
 - `src/prompts`：prompt 模板
+  - `agentPrompt.ts`：普通 agent prompt 与 loop prompt
 - `src/chains`：basic chain 执行逻辑
 - `src/agents`：agent 类型与执行入口
+  - `runAgentLoop.ts`：第五步的最小 loop 执行器
 - `src/memory`：session 级短期记忆存储
 - `src/tools`：第三步的工具能力
   - `weatherTool.ts`：WeatherAPI weather tool
@@ -113,16 +124,16 @@ npm run dev
 当前运行后会输出几部分结果：
 
 - Basic Output：来自 `runBasicService -> runBasicChain`
-- Session A Round 1 / Round 2：验证 memory
-- Weather Output：验证 WeatherAPI weather tool
-- Weather Missing City：验证天气查询缺参提示
+- Session A Round 1 / Round 2：验证 memory 与 loop 的 `final`
+- Weather Output：验证 weather tool 在 loop 中被调用
+- Weather Missing City：验证天气查询缺参时直接 `final`
 - Session B Isolation Check：验证 session 隔离
 - Skill Output：验证 `weather-brief` skill
 - Skill Missing City：验证 skill 缺少 `city` 参数时的提示
 
 ## 当前阶段说明
 
-当前实现的是同事建议顺序里的前四步：
+当前实现的是同事建议顺序里的前五步：
 
 `agent -> memory -> tool -> skill -> loop`
 
@@ -150,11 +161,19 @@ npm run dev
 - 当前 skill 直接复用 weather tool
 - skill 输入保持最小结构化参数
 - 不做多 skill 编排
-- 不做 loop
+- skill 不承担 loop 控制
 
-### 还未开始
+### 当前 loop 的边界
 
-- 第五步：`loop`
+- 只做单 Agent 的最小结构化 ReAct loop
+- 每一步只允许输出 `tool` 或 `final`
+- 当前只允许调用 `weather` tool
+- 默认最大步数为 3
+- tool 失败达到阈值后会终止
+- 模型输出非法时会终止
+- loop 中间 steps 不写入 session memory
+- 不做多 agent
+- 不做 skill 编排
 
 ## 命名说明
 
@@ -166,7 +185,7 @@ npm run dev
 当前对外主干可以这样看：
 
 - basic 线：`basicPrompt` / `basicService` / `runBasicChain`
-- agent 线：`agentPrompt` / `agentService` / `runAgent`
+- agent 线：`agentPrompt` / `agentService` / `runAgent` / `runAgentLoop`
 - skill 线：`skillService` / `skillRegistry` / `weatherBriefSkill`
 
 ## 验证示例
@@ -175,9 +194,9 @@ npm run dev
 
 1. basic chain 仍可正常运行
 2. `session-a` 第一轮说“我叫小王，请记住”
-3. `session-a` 第二轮追问“我刚刚叫什么？”
-4. `session-a` 追问“北京今天天气怎么样？”
-5. `session-a` 再问“今天天气怎么样？”，验证缺少城市时的提示
+3. `session-a` 第二轮追问“我刚刚叫什么？”，验证一步 `final`
+4. `session-a` 追问“北京今天天气怎么样？”，验证 `tool -> final`
+5. `session-a` 再问“今天天气怎么样？”，验证缺少城市时直接 `final`
 6. `session-b` 直接追问“我刚刚叫什么？”，验证不会串会话
 7. `skill-session` 调用 `weather-brief`，参数为 `{ city: "上海" }`
 8. `skill-session` 调用 `weather-brief`，参数为空对象，验证缺少 `city` 时的提示
@@ -185,9 +204,10 @@ npm run dev
 预期现象：
 
 - `session-a` 第二轮能答出“小王”
-- 天气问题会命中 weather tool
+- 天气问题会在 loop 中命中 weather tool
 - 没提供城市时会提示补充城市
 - `session-b` 因为没有历史，答不出来
+- agent 结果里能看到 `steps`、`stepCount`、`stopReason`
 - `weather-brief` 会返回天气简报
 - skill 缺少 `city` 时会返回明确提示
 

@@ -6,6 +6,24 @@ export type ToolTrace = {
   toolOutput: string;
 };
 
+export type AgentStopReason =
+  | "final_answer"
+  | "max_steps_reached"
+  | "tool_failure_limit_reached"
+  | "invalid_model_output"
+  | "unknown_tool";
+
+export type AgentStepTrace = {
+  stepIndex: number;
+  decisionType: "tool" | "final";
+  reason: string;
+  rawModelOutput: string;
+  toolTrace?: ToolTrace;
+  toolStatus?: "success" | "failed";
+  error?: string;
+  finalAnswer?: string;
+};
+
 export type MessageRole = "user" | "assistant";
 
 export type AgentMessage = {
@@ -30,7 +48,10 @@ export type AgentExecutionInput = {
 
 export type AgentRunResult = {
   // 标记当前返回来自哪种执行模式，后续接 tool/skill/loop 时便于扩展。
-  mode: "single-agent" | "agent-with-tool";
+  mode: "single-agent" | "agent-with-tool" | "agent-loop";
   output: string;
   toolTrace?: ToolTrace;
+  steps?: AgentStepTrace[];
+  stepCount?: number;
+  stopReason?: AgentStopReason;
 };

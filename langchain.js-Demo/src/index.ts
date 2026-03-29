@@ -2,6 +2,19 @@ import { runBasicService } from "./services/basicService.js";
 import { runAgentService } from "./services/agentService.js";
 import { runSkillService } from "./services/skillService.js";
 
+function summarizeLoopSteps(result: Awaited<ReturnType<typeof runAgentService>>) {
+  return (
+    result.steps?.map((step) => ({
+      stepIndex: step.stepIndex,
+      decisionType: step.decisionType,
+      toolName: step.toolTrace?.toolName ?? "none",
+      toolStatus: step.toolStatus ?? "none",
+      finalAnswer: step.finalAnswer ?? "",
+      error: step.error ?? "",
+    })) ?? []
+  );
+}
+
 async function main() {
   const basicInput = "请用一句话介绍 LangChain.js 的作用。";
   const sessionA = "session-a";
@@ -51,11 +64,17 @@ async function main() {
   console.log("Agent Mode:", agentRound1.mode);
   console.log("Session A Round 1:", agentRound1.output);
   console.log("Session A Round 2:", agentRound2.output);
+  console.log("Session A Round 2 Stop Reason:", agentRound2.stopReason ?? "none");
+  console.log("Session A Round 2 Steps:", JSON.stringify(summarizeLoopSteps(agentRound2), null, 2));
   console.log("Weather Input:", weatherInput);
   console.log("Weather Mode:", weatherResult.mode);
+  console.log("Weather Stop Reason:", weatherResult.stopReason ?? "none");
   console.log("Weather Tool:", weatherResult.toolTrace?.toolName ?? "none");
+  console.log("Weather Steps:", JSON.stringify(summarizeLoopSteps(weatherResult), null, 2));
   console.log("Weather Output:", weatherResult.output);
   console.log("Weather Missing City Input:", weatherWithoutCityInput);
+  console.log("Weather Missing City Stop Reason:", weatherWithoutCity.stopReason ?? "none");
+  console.log("Weather Missing City Steps:", JSON.stringify(summarizeLoopSteps(weatherWithoutCity), null, 2));
   console.log("Weather Missing City:", weatherWithoutCity.output);
   console.log("Session B Isolation Check:", isolatedSessionResult.output);
   console.log("Skill Name:", skillWeatherResult.skillName);
