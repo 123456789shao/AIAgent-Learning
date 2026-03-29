@@ -12,11 +12,13 @@ load_dotenv(dotenv_path=Path(__file__).resolve().parents[2] / ".env")
 class EnvConfig:
     ollama_base_url: str
     ollama_model: str
+    weather_api_key: str | None
 
 
 def load_env() -> EnvConfig:
     ollama_base_url = os.getenv("OLLAMA_BASE_URL", "").strip()
     ollama_model = os.getenv("OLLAMA_MODEL", "").strip()
+    weather_api_key = os.getenv("WEATHER_API_KEY", "").strip() or None
 
     missing_fields = []
     if not ollama_base_url:
@@ -30,4 +32,5 @@ def load_env() -> EnvConfig:
     return EnvConfig(
         ollama_base_url=ollama_base_url,
         ollama_model=ollama_model,
+        weather_api_key=weather_api_key,
     )

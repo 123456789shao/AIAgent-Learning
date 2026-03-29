@@ -3,3 +3,4 @@ langchain-ollama
 python-dotenv
 jupyter
 ipykernel
+requests
