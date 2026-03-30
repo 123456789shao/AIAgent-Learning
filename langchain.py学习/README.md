@@ -4,7 +4,7 @@
 
 ## 当前阶段目标
 
-当前进入 **skill** 这一步，在已有 basic chain baseline、prompt template、structured output、tool、agent、memory 基础上继续验证最小闭环：
+当前进入 **loop / ReAct** 这一步，在已有 basic chain baseline、prompt template、structured output、tool、agent、memory、skill 基础上继续验证最小闭环：
 
 - 环境变量读取与校验
 - Ollama 本地模型接入
@@ -15,9 +15,10 @@
 - agent 按需调用 weather tool
 - session-only memory 承接多轮上下文
 - skill 封装单一任务能力
+- loop / ReAct 显式展开决策过程
 - Jupyter notebook 可顺序运行
 
-后续再逐步演进到：loop / ReAct。
+后续可以继续演进到：更多 tool、memory + loop、skill 调度、loop / ReAct 深化。
 
 ## 目录说明
 
@@ -26,6 +27,7 @@
 - `notebooks/03_agent.ipynb`：最小 agent 学习入口
 - `notebooks/04_memory.ipynb`：最小 session memory 学习入口
 - `notebooks/05_skill.ipynb`：最小 skill 学习入口
+- `notebooks/06_loop_react.ipynb`：最小 loop / ReAct 学习入口
 - `src/config/env.py`：环境变量读取与校验
 - `src/models/ollama.py`：Ollama 模型创建
 - `src/chains/basic_chain.py`：basic chain 与 structured output 执行逻辑
@@ -33,6 +35,7 @@
 - `src/chains/agent_chain.py`：最小 weather agent 执行逻辑
 - `src/chains/memory_chain.py`：带 session memory 的 weather agent 执行逻辑
 - `src/chains/skill_chain.py`：最小 skill 执行入口
+- `src/chains/loop_react_chain.py`：最小显式 loop / ReAct 执行逻辑
 - `src/memory/store.py`：最小 session memory store
 - `src/skills/skill_types.py`：skill 类型约定
 - `src/skills/skill_registry.py`：skill 静态注册表
@@ -47,7 +50,7 @@
 - Jupyter
 - Ollama
 - 可用的本地模型
-- WeatherAPI key（第 3 步 tool / 第 4 步 agent / 第 5 步 memory / 第 6 步 skill 需要）
+- WeatherAPI key（第 3 步 tool / 第 4 步 agent / 第 5 步 memory / 第 6 步 skill / 第 7 步 loop / ReAct 需要）
 
 ## 环境变量
 
@@ -64,7 +67,7 @@ WEATHER_API_KEY=your_weatherapi_key
 说明：
 
 - `OLLAMA_BASE_URL` 与 `OLLAMA_MODEL` 是前几步的基础配置
-- `WEATHER_API_KEY` 只在第 3 步 tool、第 4 步 agent、第 5 步 memory 和第 6 步 skill 示例中需要
+- `WEATHER_API_KEY` 只在第 3 步 tool、第 4 步 agent、第 5 步 memory、第 6 步 skill 和第 7 步 loop / ReAct 示例中需要
 
 ## 安装依赖
 
@@ -87,6 +90,7 @@ jupyter notebook
 - `notebooks/03_agent.ipynb`
 - `notebooks/04_memory.ipynb`
 - `notebooks/05_skill.ipynb`
+- `notebooks/06_loop_react.ipynb`
 
 ## 当前 notebook 会验证什么
 
@@ -132,6 +136,15 @@ jupyter notebook
 5. 未注册的 skill name 会返回明确提示
 6. 与直接 tool 输出对比时能看出 skill 的封装差异
 
+### 06_loop_react.ipynb
+
+1. 能读取 loop / ReAct 所需环境变量
+2. 普通问题能直接返回 `final`
+3. 天气问题能形成 `tool -> final` 的最小闭环
+4. 缺少城市时会直接追问，而不是乱调工具
+5. 能观察 `steps`、`step_count`、`stop_reason`
+6. 能对比隐式 tool calling 与显式 loop / ReAct 的区别
+
 ## 最小通过标准
 
 - 没有 Ollama 相关环境变量缺失错误
@@ -149,6 +162,11 @@ jupyter notebook
 - registry 中能查到 `weather-brief`
 - skill 能返回任务化天气结果
 - 缺少参数和未知 skill 时能返回清晰提示
+- `06_loop_react.ipynb` 能成功运行
+- 普通问题能直接返回 `final`
+- 天气问题能形成 `tool -> final` 的最小闭环
+- 缺少城市时不会乱调工具
+- 能看到 `steps`、`step_count`、`stop_reason`
 - 最终输出为基于工具结果和上下文的中文回答
 
 ## 后续建议路线
@@ -161,8 +179,5 @@ jupyter notebook
 - 第三步：tool
 - 第四步：agent
 - 第五步：memory
-
-后续可以继续按这个顺序演进：
-
 - 第六步：skill
 - 第七步：loop / ReAct

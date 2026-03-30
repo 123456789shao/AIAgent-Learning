@@ -1,0 +1,7 @@
+
+.vscode
+.package-lock.json
+.claude/settings.local.json
+.claude/worktrees/
+node_modules/
+dist/
