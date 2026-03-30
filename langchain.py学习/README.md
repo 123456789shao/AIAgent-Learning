@@ -4,7 +4,7 @@
 
 ## 当前阶段目标
 
-当前进入 **memory** 这一步，在已有 basic chain baseline、prompt template、structured output、tool、agent 基础上继续验证最小闭环：
+当前进入 **skill** 这一步，在已有 basic chain baseline、prompt template、structured output、tool、agent、memory 基础上继续验证最小闭环：
 
 - 环境变量读取与校验
 - Ollama 本地模型接入
@@ -14,9 +14,10 @@
 - weather tool 查询外部天气信息
 - agent 按需调用 weather tool
 - session-only memory 承接多轮上下文
+- skill 封装单一任务能力
 - Jupyter notebook 可顺序运行
 
-后续再逐步演进到：skill、loop / ReAct。
+后续再逐步演进到：loop / ReAct。
 
 ## 目录说明
 
@@ -24,13 +25,18 @@
 - `notebooks/02_tool.ipynb`：weather tool 学习入口
 - `notebooks/03_agent.ipynb`：最小 agent 学习入口
 - `notebooks/04_memory.ipynb`：最小 session memory 学习入口
+- `notebooks/05_skill.ipynb`：最小 skill 学习入口
 - `src/config/env.py`：环境变量读取与校验
 - `src/models/ollama.py`：Ollama 模型创建
 - `src/chains/basic_chain.py`：basic chain 与 structured output 执行逻辑
 - `src/chains/tool_chain.py`：模型与 weather tool 的最小调用链
 - `src/chains/agent_chain.py`：最小 weather agent 执行逻辑
 - `src/chains/memory_chain.py`：带 session memory 的 weather agent 执行逻辑
+- `src/chains/skill_chain.py`：最小 skill 执行入口
 - `src/memory/store.py`：最小 session memory store
+- `src/skills/skill_types.py`：skill 类型约定
+- `src/skills/skill_registry.py`：skill 静态注册表
+- `src/skills/weather_brief_skill.py`：weather-brief skill 实现
 - `src/tools/weather.py`：WeatherAPI 查询与 LangChain tool 封装
 - `requirements.txt`：最小依赖
 - `.env.example`：环境变量示例
@@ -41,7 +47,7 @@
 - Jupyter
 - Ollama
 - 可用的本地模型
-- WeatherAPI key（第 3 步 tool / 第 4 步 agent / 第 5 步 memory 需要）
+- WeatherAPI key（第 3 步 tool / 第 4 步 agent / 第 5 步 memory / 第 6 步 skill 需要）
 
 ## 环境变量
 
@@ -58,7 +64,7 @@ WEATHER_API_KEY=your_weatherapi_key
 说明：
 
 - `OLLAMA_BASE_URL` 与 `OLLAMA_MODEL` 是前几步的基础配置
-- `WEATHER_API_KEY` 只在第 3 步 tool、第 4 步 agent 和第 5 步 memory 示例中需要
+- `WEATHER_API_KEY` 只在第 3 步 tool、第 4 步 agent、第 5 步 memory 和第 6 步 skill 示例中需要
 
 ## 安装依赖
 
@@ -80,6 +86,7 @@ jupyter notebook
 - `notebooks/02_tool.ipynb`
 - `notebooks/03_agent.ipynb`
 - `notebooks/04_memory.ipynb`
+- `notebooks/05_skill.ipynb`
 
 ## 当前 notebook 会验证什么
 
@@ -116,6 +123,15 @@ jupyter notebook
 4. clear 后 memory 会失效
 5. 与无 memory 的 agent 对比时能看出差异
 
+### 05_skill.ipynb
+
+1. 能读取 skill 所需环境变量
+2. 能查看已注册的 skill
+3. 能执行 `weather-brief` skill 并返回任务化天气结果
+4. 缺少 `city` 参数时会返回清晰错误
+5. 未注册的 skill name 会返回明确提示
+6. 与直接 tool 输出对比时能看出 skill 的封装差异
+
 ## 最小通过标准
 
 - 没有 Ollama 相关环境变量缺失错误
@@ -129,6 +145,10 @@ jupyter notebook
 - `04_memory.ipynb` 能成功运行
 - memory 版本能承接同一 session 的上一轮上下文
 - 不同 session 之间不会串话
+- `05_skill.ipynb` 能成功运行
+- registry 中能查到 `weather-brief`
+- skill 能返回任务化天气结果
+- 缺少参数和未知 skill 时能返回清晰提示
 - 最终输出为基于工具结果和上下文的中文回答
 
 ## 后续建议路线
@@ -140,7 +160,9 @@ jupyter notebook
 - 第二步：output parser / structured output
 - 第三步：tool
 - 第四步：agent
+- 第五步：memory
 
 后续可以继续按这个顺序演进：
 
-- 第五步：memory
+- 第六步：skill
+- 第七步：loop / ReAct
