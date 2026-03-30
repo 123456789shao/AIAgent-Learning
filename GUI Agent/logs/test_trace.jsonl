@@ -1,0 +1,1 @@
+{"status": "ok", "timestamp": "2026-03-30T00:00:00", "perception": {"ocr_text": "订单 审核 客户信息", "ocr_lines": ["订单", "审核", "客户信息"], "screen_size": [1920, 1080]}, "decision": {"matched": true, "scene_id": "order_review", "scene_name": "订单审核页", "reason": "命中测试规则", "hint": "测试提示", "next_step": "测试下一步", "risk_level": "medium", "decision_type": "suggest_next_step"}, "elapsed_ms": 0}

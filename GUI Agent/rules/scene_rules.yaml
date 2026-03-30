@@ -1,0 +1,66 @@
+scene_rules:
+  - scene_id: submit_confirm
+    name: 正式提交确认框
+    keywords_all:
+      - 确认
+      - 提交
+    keywords_any:
+      - 正式数据
+      - 是否继续
+      - 不可撤销
+      - 提交成功后不可修改
+    exclude_keywords:
+      - 测试提交
+      - 草稿
+    hint: 这是正式提交前的确认框，请再次确认信息无误。
+    next_step: 重点核对客户信息、订单金额和提交对象，确认无误后再执行提交。
+    risk_level: high
+
+  - scene_id: order_review
+    name: 订单审核页
+    keywords_all:
+      - 订单
+      - 审核
+    keywords_any:
+      - 客户信息
+      - 订单金额
+      - 提交审核
+      - 审核备注
+      - 审核结果
+    exclude_keywords:
+      - 登录
+      - 查询
+      - 列表
+    hint: 你已进入订单审核页面，先核对客户信息、订单金额和审核结论。
+    next_step: 确认关键信息和审核备注无误后，再继续提交审核。
+    risk_level: medium
+
+  - scene_id: missing_phone
+    name: 缺少手机号提示场景
+    keywords_all:
+      - 手机号
+    keywords_any:
+      - 必填
+      - 不能为空
+      - 缺失
+      - 请输入手机号
+    exclude_keywords:
+      - 修改手机号
+      - 手机号查询
+    hint: 当前缺少手机号，请先补齐后再继续。
+    next_step: 补充并核对手机号格式后，再执行后续操作。
+    risk_level: medium
+
+  - scene_id: login_page
+    name: 登录页面
+    keywords_all:
+      - 登录
+    keywords_any:
+      - 用户名
+      - 密码
+      - 验证码
+      - 立即登录
+    exclude_keywords: []
+    hint: 当前处于登录页面，先完成登录再继续后续业务操作。
+    next_step: 确认账号环境正确后再登录，避免误入正式环境。
+    risk_level: low

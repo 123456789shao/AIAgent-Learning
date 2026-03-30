@@ -1,0 +1,1 @@
+{"status": "error", "timestamp": "2026-03-30T17:33:58", "perception": {"ocr_text": "", "ocr_lines": [], "screen_size": []}, "decision": {"matched": false, "scene_id": null, "scene_name": null, "reason": "mock scan error", "hint": null, "next_step": null, "risk_level": null, "decision_type": "no_action"}, "elapsed_ms": 0}

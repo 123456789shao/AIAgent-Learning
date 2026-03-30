@@ -1,0 +1,7 @@
+app_title: GUI Agent MVP
+scan_interval_ms: 2000
+debug: true
+ocr_language: ch
+rules_file: rules/scene_rules.yaml
+trace_enabled: true
+trace_file: logs/gui_agent_trace.jsonl
